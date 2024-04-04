@@ -4,23 +4,35 @@
         Title="Calculator" Height="350" Width="300">
     <Window.Resources>
         <Style TargetType="Button" x:Key="NumberButtonStyle">
-            <Setter Property="Background" Value="Pink"/>
-            <Setter Property="Foreground" Value="Black"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="Padding" Value="10"/>
-        </Style>
-        <Style TargetType="Button" x:Key="OperatorButtonStyle">
             <Setter Property="Background" Value="Blue"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="Margin" Value="5"/>
             <Setter Property="Padding" Value="10"/>
         </Style>
+        <Style TargetType="Button" x:Key="OperatorButtonStyle">
+            <Setter Property="Background" Value="Pink"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="10"/>
+        </Style>
     </Window.Resources>
     <Grid>
-        <TextBox x:Name="displayTextBox" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" Width="260" Height="40" FontSize="20" TextAlignment="Right"/>
-        <Grid Margin="10,60,10,10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Previous Operation TextBox -->
+        <TextBox x:Name="previousOperationTextBox" Grid.Row="0" Margin="10" Width="260" Height="40" FontSize="16" TextAlignment="Right" IsReadOnly="True" TextWrapping="Wrap"/>
+
+        <!-- Current Number TextBox -->
+        <TextBox x:Name="currentNumberTextBox" Grid.Row="1" Margin="10" Width="260" Height="40" FontSize="24" TextAlignment="Right" IsReadOnly="True" TextWrapping="Wrap"/>
+
+        <!-- Buttons Grid -->
+        <Grid Grid.Row="2" Margin="10,10,10,10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -33,28 +45,37 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Button Content="7" Grid.Row="0" Grid.Column="0" Click="Number_Click" Style="{StaticResource NumberButtonStyle}"/>
-            <Button Content="8" Grid.Row="0" Grid.Column="1" Click="Number_Click" Style="{StaticResource NumberButtonStyle}"/>
-            <Button Content="9" Grid.Row="0" Grid.Column="2" Click="Number_Click" Style="{StaticResource NumberButtonStyle}"/>
-            <Button Content="/" Grid.Row="0" Grid.Column="3" Click="Operator_Click" Style="{StaticResource OperatorButtonStyle}"/>
 
+            <!-- Number Buttons -->
+            <Button Content="1" Grid.Row="0" Grid.Column="0" Click="Number_Click" Style="{StaticResource NumberButtonStyle}"/>
+            <Button Content="2" Grid.Row="0" Grid.Column="1" Click="Number_Click" Style="{StaticResource NumberButtonStyle}"/>
+            <Button Content="3" Grid.Row="0" Grid.Column="2" Click="Number_Click" Style="{StaticResource NumberButtonStyle}"/>
             <Button Content="4" Grid.Row="1" Grid.Column="0" Click="Number_Click" Style="{StaticResource NumberButtonStyle}"/>
             <Button Content="5" Grid.Row="1" Grid.Column="1" Click="Number_Click" Style="{StaticResource NumberButtonStyle}"/>
             <Button Content="6" Grid.Row="1" Grid.Column="2" Click="Number_Click" Style="{StaticResource NumberButtonStyle}"/>
-            <Button Content="*" Grid.Row="1" Grid.Column="3" Click="Operator_Click" Style="{StaticResource OperatorButtonStyle}"/>
+            <Button Content="7" Grid.Row="2" Grid.Column="0" Click="Number_Click" Style="{StaticResource NumberButtonStyle}"/>
+            <Button Content="8" Grid.Row="2" Grid.Column="1" Click="Number_Click" Style="{StaticResource NumberButtonStyle}"/>
+            <Button Content="9" Grid.Row="2" Grid.Column="2" Click="Number_Click" Style="{StaticResource NumberButtonStyle}"/>
+            <Button Content="0" Grid.Row="3" Grid.Column="1" Click="Number_Click" Style="{StaticResource NumberButtonStyle}"/>
 
-            <Button Content="1" Grid.Row="2" Grid.Column="0" Click="Number_Click" Style="{StaticResource NumberButtonStyle}"/>
-            <Button Content="2" Grid.Row="2" Grid.Column="1" Click="Number_Click" Style="{StaticResource NumberButtonStyle}"/>
-            <Button Content="3" Grid.Row="2" Grid.Column="2" Click="Number_Click" Style="{StaticResource NumberButtonStyle}"/>
-            <Button Content="-" Grid.Row="2" Grid.Column="3" Click="Operator_Click" Style="{StaticResource OperatorButtonStyle}"/>
+            <!-- Decimal Point Button -->
+            <Button Content="." Grid.Row="3" Grid.Column="0" Click="Decimal_Click" Style="{StaticResource NumberButtonStyle}"/>
 
-            <Button Content="0" Grid.Row="3" Grid.Column="0" Click="Number_Click" Style="{StaticResource NumberButtonStyle}"/>
-            <Button Content="." Grid.Row="3" Grid.Column="1" Click="Decimal_Click" Style="{StaticResource NumberButtonStyle}"/>
-            <Button Content="=" Grid.Row="3" Grid.Column="2" Click="Equals_Click" Style="{StaticResource OperatorButtonStyle}"/>
-            <Button Content="+" Grid.Row="3" Grid.Column="3" Click="Operator_Click" Style="{StaticResource OperatorButtonStyle}"/>
+            <!-- Operator Buttons -->
+            <Button Content="+" Grid.Row="0" Grid.Column="3" Click="Operator_Click" Style="{StaticResource OperatorButtonStyle}"/>
+            <Button Content="-" Grid.Row="1" Grid.Column="3" Click="Operator_Click" Style="{StaticResource OperatorButtonStyle}"/>
+            <Button Content="*" Grid.Row="2" Grid.Column="3" Click="Operator_Click" Style="{StaticResource OperatorButtonStyle}"/>
+            <Button Content="/" Grid.Row="3" Grid.Column="3" Click="Operator_Click" Style="{StaticResource OperatorButtonStyle}"/>
 
-            <Button Content="C" Grid.Row="4" Grid.Column="0" Click="Clear_Click" Style="{StaticResource OperatorButtonStyle}"/>
+            <!-- Clear Buttons -->
+            <Button Content="CE" Grid.Row="0" Grid.Column="4" Click="ClearEntry_Click" Style="{StaticResource OperatorButtonStyle}"/>
+            <Button Content="C" Grid.Row="1" Grid.Column="4" Click="Clear_Click" Style="{StaticResource OperatorButtonStyle}"/>
+            <Button Content="&lt;" Grid.Row="2" Grid.Column="4" Click="Backspace_Click" Style="{StaticResource OperatorButtonStyle}"/>
+
+            <!-- Equals Button -->
+            <Button Content="=" Grid.Row="3" Grid.Column="4" Click="Equals_Click" Style="{StaticResource OperatorButtonStyle}"/>
         </Grid>
     </Grid>
 </Window>

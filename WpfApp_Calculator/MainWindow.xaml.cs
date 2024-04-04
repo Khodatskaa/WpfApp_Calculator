@@ -13,112 +13,162 @@ namespace WpfApp_Calculator
 {
     public partial class MainWindow : Window
     {
-        private string currentInput = "";
-        private double currentResult = 0;
-        private char lastOperator = ' ';
+        private string previousOperation = "";
+        private string currentNumber = "";
+        private double result = 0;
 
         public MainWindow()
         {
             InitializeComponent();
         }
 
+        private void UpdateDisplay()
+        {
+            previousOperationTextBox.Text = previousOperation;
+            currentNumberTextBox.Text = currentNumber;
+        }
+
+        private void AppendDigit(char digit)
+        {
+            if (!(digit == '0' && currentNumber == "0"))
+            {
+                currentNumber += digit;
+                UpdateDisplay();
+            }
+        }
+
         private void Number_Click(object sender, RoutedEventArgs e)
         {
             Button? button = sender as Button;
-            currentInput += button.Content.ToString();
-            displayTextBox.Text = currentInput;
+            AppendDigit(button.Content.ToString()[0]);
+        }
+
+        private void Decimal_Click(object sender, RoutedEventArgs e)
+        {
+            if (!currentNumber.Contains("."))
+            {
+                currentNumber += ".";
+                UpdateDisplay();
+            }
         }
 
         private void Operator_Click(object sender, RoutedEventArgs e)
         {
             Button? button = sender as Button;
-            if (!string.IsNullOrWhiteSpace(currentInput))
+            if (!string.IsNullOrWhiteSpace(currentNumber))
             {
-                if (double.TryParse(currentInput, out double input))
+                if (previousOperation != "")
                 {
-                    if (lastOperator == '+')
-                        currentResult += input;
-                    else if (lastOperator == '-')
-                        currentResult -= input;
-                    else if (lastOperator == '*')
-                        currentResult *= input;
-                    else if (lastOperator == '/')
+                    double num;
+                    if (double.TryParse(currentNumber, out num))
                     {
-                        if (input != 0)
-                            currentResult /= input;
-                        else
-                        {
-                            MessageBox.Show("Cannot divide by zero!");
-                            currentInput = "";
-                            displayTextBox.Text = "";
-                            return;
-                        }
+                        Calculate();
                     }
                     else
-                        currentResult = input;
-
-                    lastOperator = Convert.ToChar(button.Content);
-                    currentInput = "";
-                    displayTextBox.Text = "";
+                    {
+                        MessageBox.Show("Invalid input!");
+                        return;
+                    }
                 }
-                else
-                {
-                    MessageBox.Show("Invalid input!");
-                }
+                previousOperation = currentNumber + " " + button.Content.ToString();
+                currentNumber = "";
+                UpdateDisplay();
             }
         }
 
         private void Equals_Click(object sender, RoutedEventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(currentInput))
+            if (!string.IsNullOrWhiteSpace(currentNumber))
             {
-                if (double.TryParse(currentInput, out double input))
+                double num;
+                if (double.TryParse(currentNumber, out num))
                 {
-                    if (lastOperator == '+')
-                        currentResult += input;
-                    else if (lastOperator == '-')
-                        currentResult -= input;
-                    else if (lastOperator == '*')
-                        currentResult *= input;
-                    else if (lastOperator == '/')
-                    {
-                        if (input != 0)
-                            currentResult /= input;
-                        else
-                        {
-                            MessageBox.Show("Cannot divide by zero!");
-                            currentInput = "";
-                            displayTextBox.Text = "";
-                            return;
-                        }
-                    }
-                    currentInput = currentResult.ToString();
-                    displayTextBox.Text = currentInput;
-                    currentResult = 0;
-                    lastOperator = ' ';
+                    Calculate();
+                    previousOperation = "";
+                    UpdateDisplay();
                 }
                 else
                 {
                     MessageBox.Show("Invalid input!");
+                    return;
                 }
             }
         }
 
-        private void Decimal_Click(object sender, RoutedEventArgs e)
+        private void Calculate()
         {
-            if (!currentInput.Contains("."))
+            double num;
+            if (!double.TryParse(currentNumber, out num))
             {
-                currentInput += ".";
-                displayTextBox.Text = currentInput;
+                MessageBox.Show("Invalid input!");
+                return;
             }
+
+            string[] operationParts = previousOperation.Split(' ');
+            if (operationParts.Length != 2)
+            {
+                MessageBox.Show("Invalid operation!");
+                return;
+            }
+
+            double previousNum;
+            if (!double.TryParse(operationParts[0], out previousNum))
+            {
+                MessageBox.Show("Invalid input!");
+                return;
+            }
+
+            string operation = operationParts[1];
+            switch (operation)
+            {
+                case "+":
+                    result = previousNum + num;
+                    break;
+                case "-":
+                    result = previousNum - num;
+                    break;
+                case "*":
+                    result = previousNum * num;
+                    break;
+                case "/":
+                    if (num != 0)
+                        result = previousNum / num;
+                    else
+                    {
+                        MessageBox.Show("Cannot divide by zero!");
+                        return;
+                    }
+                    break;
+                default:
+                    MessageBox.Show("Invalid operation!");
+                    return;
+            }
+
+            currentNumber = result.ToString();
+            previousOperation = "";
+            result = 0;
+        }
+
+        private void ClearEntry_Click(object sender, RoutedEventArgs e)
+        {
+            currentNumber = "";
+            UpdateDisplay();
         }
 
         private void Clear_Click(object sender, RoutedEventArgs e)
         {
-            currentInput = "";
-            currentResult = 0;
-            lastOperator = ' ';
-            displayTextBox.Text = "";
+            previousOperation = "";
+            currentNumber = "";
+            UpdateDisplay();
+        }
+
+        private void Backspace_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentNumber.Length > 0)
+            {
+                currentNumber = currentNumber.Substring(0, currentNumber.Length - 1);
+                UpdateDisplay();
+            }
         }
     }
 }
